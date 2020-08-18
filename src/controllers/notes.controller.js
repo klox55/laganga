@@ -52,14 +52,30 @@ notesCrtl.renderNotes = (req, res) => {
 };
 
 notesCrtl.renderEditForm = (req, res) => {
-    res.send('renderEditForm');
+    res.redirect('note/edit-note');
 };
 notesCrtl.updateNote = (req, res) => {
     res.send('updateNote');
 };
 
 notesCrtl.deleteNote = (req, res) => {
-    res.send('deleteNote');
+
+    req.getConnection(function(err,connection){
+        connection.query('DELETE FROM `notes` WHERE `notes`.`id` = ?',
+        [req.params.id], function (error, result) {
+            if (error) {
+                throw error;
+            } else {
+                if (0 < result.affectedRows)
+                    console.log('Successfully removed');
+                else
+                    console.log('Error in Delete');
+            }
+        }
+        )
+    })
+    res.redirect('/notes');
+    
 };
 
 module.exports = notesCrtl;
