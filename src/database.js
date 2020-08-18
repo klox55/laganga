@@ -1,5 +1,8 @@
 var mysql = require('mysql');
 var myConnection = require('express-myconnection');
+// const app = require('./server');
+var express = require('express');
+const app = express();
 
 const { NOTES_APP_MONGODB_HOST, NOTES_APP_MONGODB_DATABASE } = process.env;
 const MONGODB_URI = `mongodb://${NOTES_APP_MONGODB_HOST}/${NOTES_APP_MONGODB_DATABASE}`;
@@ -8,20 +11,11 @@ const MONGODB_URI = `mongodb://${NOTES_APP_MONGODB_HOST}/${NOTES_APP_MONGODB_DAT
 console.log('ON DB');
 
 
-var connection = mysql.createConnection({
+app.use(myConnection(mysql,{
    host: 'localhost',
    user: 'root',
    password: '',
    database: 'laganga',
    port: 3306
-});
-connection.connect(function(error){
-   if(error){
-      throw error;
-   }else{
-      console.log('Conexion correcta con la base de datos al arranque.');
-   }
+},'single'));
 
-});
-
-module.exports = connection;

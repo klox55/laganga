@@ -10,6 +10,7 @@ const {
     deleteNote
 } = require('../controllers/notes.controller');
 
+const Note = require('../models/Notes');
 // const { isAuthenticated } = require('../helpers/auth');
 
 // New Note

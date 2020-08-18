@@ -1,26 +1,54 @@
 const notesCrtl = {};
-const Note = require('../models/Note');
-const Notes = require('../models/Notes');
+// const Notes = require('../models/Notes');
+
+// const Notes = require('../models/Notes');
 
 
 notesCrtl.renderNotesForm = (req, res) => {
     res.render('notes/new-note');
 };
 
-notesCrtl.createNewNote = async (req, res) => {
-    console.log(req.body);
+notesCrtl.createNewNote = (req, res) => {
     const { title, description } = req.body;
-    await Note.insertNote(title,description,'Function');    
-    // res.send('createNewNote');
+
+    req.getConnection(function(err,connection){
+        connection.query('INSERT INTO notes(title, description,user) VALUES( ?, ?, ?)',
+        [title, description, "si"], function (error, result) {
+            if (error) {
+                throw error;
+            } else {
+                if (0 < result.affectedRows)
+                    console.log('Inserted Correct');
+                else
+                    console.log('Error in insert');
+            }
+        }
+        )
+    })
     res.redirect('/notes');
 };
 
 notesCrtl.renderNotes = (req, res) => {
-    // var string = JSON.stringify(Notes.query._results); // Se traen los resultados
-    // var string2 = string.slice(1,-1)
-    // var json = JSON.parse(string2); 
-    var json = JSON.parse(JSON.stringify(Notes.query._results).slice(1,-1));    
-    res.render('notes/all-notes',{json});
+    
+    req.getConnection((err,conn)=>{
+        conn.query('SELECT * FROM notes', function (error, result) {
+           if (error) {
+              throw error;
+           } else {
+              if (result.length > 0) {
+                //  console.log('>> results: ', result); 
+                 var string = JSON.stringify(result); 
+                //  console.log('>> string: ', string); 
+                 var json = JSON.parse(string); 
+                 // console.log('>> json: ', json); 
+                 // console.log('>> user.name: ', json[0].id); 
+                 res.render('notes/all-notes',{json});
+              } else {
+                 console.log('Registro no encontrado');
+              }
+           }
+        });
+     });
 };
 
 notesCrtl.renderEditForm = (req, res) => {

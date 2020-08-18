@@ -2,7 +2,8 @@ const express = require('express');
 const exphbs = require('express-handlebars');// motodor de plantillas de html
 const path = require('path');// modulo para contatenar dirrecciones en windows y linux
 const morgan = require('morgan');
-
+var mysql = require('mysql');
+var myConnection = require('express-myconnection');
 // initializations
 const app = express();
 
@@ -21,6 +22,16 @@ app.set('view engine', '.hbs'); // establecer el motor de plantillas
 // Middlewares 
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended:false})); // los Datos que llegen atravez de un formulario seran JSON 
+
+app.use(myConnection(mysql,{
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'laganga',
+    port: 3306
+ },'single'));
+ 
+
 
 // Global variables
 
