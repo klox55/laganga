@@ -52,10 +52,47 @@ notesCrtl.renderNotes = (req, res) => {
 };
 
 notesCrtl.renderEditForm = (req, res) => {
-    res.redirect('note/edit-note');
+    req.getConnection((err,conn)=>{
+        conn.query('SELECT * FROM notes  WHERE `notes`.`id` = ?',
+        [req.params.id], function (error, result) {
+           if (error) {
+              throw error;
+           } else {
+              if (result.length > 0) {
+                //  console.log('>> results: ', result); 
+                 var string = JSON.stringify(result);
+                 string = string.slice(1, -1); 
+                //  console.log('>> string: ', string); 
+                 var note = JSON.parse(string); 
+                 // console.log('>> json: ', json); 
+                 // console.log('>> user.name: ', json[0].id); 
+                 console.log(note);
+                 res.render('notes/edit-note',{note});
+              } else {
+                 console.log('Registro no encontrado');
+              }
+           }
+        });
+     });
 };
 notesCrtl.updateNote = (req, res) => {
-    res.send('updateNote');
+    const { title,description } = req.body;
+
+    req.getConnection(function(err,connection){
+        connection.query('UPDATE `notes` SET `title` = ?, `description` = ? WHERE `notes`.`id` = ?',
+        [title,description,req.params.id], function (error, result) {
+            if (error) {
+                throw error;
+            } else {
+                if (0 < result.affectedRows)
+                    console.log('Successfully update');
+                else
+                    console.log('Error in Update');
+            }
+        }
+        )
+    })
+    res.redirect('/notes');
 };
 
 notesCrtl.deleteNote = (req, res) => {
