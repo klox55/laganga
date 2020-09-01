@@ -26,6 +26,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({extended:false})); // los Datos que llegen atravez de un formulario seran JSON 
 app.use(methodOverride('_method'))
 
+// Conexion de base de datos
 app.use(myConnection(mysql,{
     host: 'localhost',
     user: 'root',
